@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:clima/services/location.dart';
-import 'package:http/http.dart' as http;
+import 'package:clima/services/networking.dart';
 
-const apiKey = '0d5cc78bf00333878f4a8ddbe730f608';
+String url =
+    'https://api.openweathermap.org/data/2.5/weather?q=Milan&units=metric&appid=0d5cc78bf00333878f4a8ddbe730f608';
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -24,14 +25,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
     await location.getlocation();
     latitude = location.latitude;
     longitude = location.longitude;
-    getdata();
-  }
 
-  void getdata() async {
-    var url = Uri.parse(
-        'https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey');
-    http.Response responce = await http.get(url);
-    print(responce.body);
+    NetworkHelper networkHelper = NetworkHelper(url);
+
+    var weather = networkHelper.getdata();
   }
 
   Widget build(BuildContext context) {
