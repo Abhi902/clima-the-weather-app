@@ -1,4 +1,3 @@
-import 'package:clima/services/networking.dart';
 import 'package:geolocator/geolocator.dart';
 
 class Location {

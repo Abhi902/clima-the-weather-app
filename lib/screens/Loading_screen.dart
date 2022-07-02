@@ -1,9 +1,7 @@
+import 'package:clima/screens/location_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:clima/services/location.dart';
-import 'package:clima/services/networking.dart';
-
-String url =
-    'https://api.openweathermap.org/data/2.5/weather?q=Milan&units=metric&appid=0d5cc78bf00333878f4a8ddbe730f608';
+import 'package:clima/services/weather.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -11,9 +9,6 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  double? longitude;
-  double? latitude;
-
   @override
   void initState() {
     super.initState();
@@ -21,20 +16,27 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   void getlocation() async {
-    Location location = Location();
-    await location.getlocation();
-    latitude = location.latitude;
-    longitude = location.longitude;
-
-    NetworkHelper networkHelper = NetworkHelper(url);
-
-    var weather = networkHelper.getdata();
+    WeatherModel object = WeatherModel();
+    var weather = await object.getlocation();
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return LocationScreen(weather);
+    }));
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('CLIMA'),
+      ),
+      body: Center(
+        child: Column(
+          children: <Widget>[
+            SpinKitDoubleBounce(
+              color: Colors.white,
+              size: 100,
+            )
+          ],
+        ),
       ),
     );
   }
