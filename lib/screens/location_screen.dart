@@ -1,6 +1,7 @@
 import 'package:clima/services/weather.dart';
 import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
+import 'package:clima/screens/city_screen.dart';
 
 class LocationScreen extends StatefulWidget {
   LocationScreen(this.weatherdata);
@@ -16,6 +17,7 @@ class _LocationScreenState extends State<LocationScreen> {
   String? weathericon;
   String? cityname;
   String? message;
+  String? newcityname;
 
   void initState() {
     super.initState();
@@ -23,12 +25,22 @@ class _LocationScreenState extends State<LocationScreen> {
   }
 
   void updateUI(dynamic weatherdata) {
-    double temp = weatherdata['main']['temp'];
-    temperature = temp.toInt();
-    var condition = weatherdata['weather'][0]['id'];
-    cityname = weatherdata['name'];
-    weathericon = object.getWeatherIcon(condition);
-    message = object.getMessage(temperature);
+    setState(() {
+      if (weatherdata == null) {
+        temperature = 0;
+        cityname = "";
+        weathericon = "";
+        message = "unable to get the weather";
+        return;
+      }
+
+      double temp = weatherdata['main']['temp'];
+      temperature = temp.toInt();
+      var condition = weatherdata['weather'][0]['id'];
+      cityname = weatherdata['name'];
+      weathericon = object.getWeatherIcon(condition);
+      message = object.getMessage(temperature);
+    });
   }
 
   Widget build(BuildContext context) {
@@ -58,8 +70,19 @@ class _LocationScreenState extends State<LocationScreen> {
                       size: 50.0,
                     ),
                   ),
-                  FlatButton(
-                    onPressed: () {},
+                  ElevatedButton(
+                    onPressed: () async {
+                      newcityname = await Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return CityScreen();
+                      }));
+
+                      if (newcityname != null) {
+                        var weatherdata =
+                            await object.getcitylocation(newcityname);
+                        updateUI(weatherdata);
+                      }
+                    },
                     child: Icon(
                       Icons.location_city,
                       size: 50.0,
